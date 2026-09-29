@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import LogoutButton from "./LogoutButton";
-import { adicionarTransacao } from "./actions";
+import { adicionarTransacao, excluirTransacao } from "./actions";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -459,6 +459,7 @@ export default async function Home() {
                       style={{ borderColor: "#25252A" }}
                     >
 
+                      {/* INFORMAÇÕES DA TRANSAÇÃO */}
                       <div className="flex items-center gap-4">
 
                         <div
@@ -495,17 +496,44 @@ export default async function Home() {
 
                       </div>
 
-                      <p
-                        className="font-bold"
-                        style={{
-                          color: ehReceita
-                            ? "#A8C7A0"
-                            : "#C77B84",
-                        }}
-                      >
-                        {ehReceita ? "+" : "-"}{" "}
-                        {formatarMoeda(Number(transacao.valor))}
-                      </p>
+                      {/* VALOR + EXCLUIR */}
+                      <div className="flex items-center gap-5">
+
+                        <p
+                          className="font-bold"
+                          style={{
+                            color: ehReceita
+                              ? "#A8C7A0"
+                              : "#C77B84",
+                          }}
+                        >
+                          {ehReceita ? "+" : "-"}{" "}
+                          {formatarMoeda(Number(transacao.valor))}
+                        </p>
+
+                        <form action={excluirTransacao}>
+
+                          <input
+                            type="hidden"
+                            name="id"
+                            value={transacao.id}
+                          />
+
+                          <button
+                            type="submit"
+                            className="rounded-lg border px-3 py-2 text-sm font-semibold transition hover:opacity-80"
+                            style={{
+                              backgroundColor: "#000000",
+                              borderColor: "#4A0F16",
+                              color: "#C77B84",
+                            }}
+                          >
+                            Excluir
+                          </button>
+
+                        </form>
+
+                      </div>
 
                     </div>
                   );
