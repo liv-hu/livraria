@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import LogoutButton from "./LogoutButton";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -8,6 +9,10 @@ export default async function Home() {
     .from("livros")
     .select("*")
     .order("id", { ascending: true });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (error) {
     return (
@@ -27,7 +32,6 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-stone-100 text-stone-900">
-      {/* Cabeçalho */}
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div>
@@ -40,16 +44,19 @@ export default async function Home() {
             </p>
           </div>
 
-          <Link
-            href="/login"
-            className="rounded-lg bg-stone-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-stone-700"
-          >
-            Entrar
-          </Link>
+          {user ? (
+            <LogoutButton />
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-lg bg-stone-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-stone-700"
+            >
+              Entrar
+            </Link>
+          )}
         </div>
       </header>
 
-      {/* Conteúdo */}
       <section className="mx-auto max-w-7xl px-6 py-10">
         <div className="mb-8">
           <h2 className="text-3xl font-bold">Nosso catálogo</h2>
@@ -59,7 +66,6 @@ export default async function Home() {
           </p>
         </div>
 
-        {/* Grade de livros */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {livros.map((livro) => (
             <article
